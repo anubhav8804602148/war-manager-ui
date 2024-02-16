@@ -1,0 +1,20 @@
+body{
+    background: url("hunterWallImage.jpg") no-repeat;
+    background-size: cover;
+}
+#killedMetricsForm{
+    background: linear-gradient(45deg, red, white);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(255, 0, 0, 0.5);
+}
+
+#killedMetricsForm input{
+    border: none;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(255, 0, 0, 0.5);
+    font-family: Nosifer;
+}
