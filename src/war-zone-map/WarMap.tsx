@@ -11,7 +11,7 @@ import { AlertBox } from "../app-manager/AlertBox";
 import { actions } from "./store/WarZoneSlice";
 
 export const WarMap = () => {
-  const defaultTileLayerUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png";
+  const defaultTileLayerUrl = import.meta.env.VITE_API_DEFAULT_TILE_LAYER;
   const selectedMapLayer = useSelector((state: any) => state.warZoneReducer.selectedMapLayer);
   const selectedMapCentre = useSelector((state: any) => state.warZoneReducer.selectedMapCentre);
   const zoomLevel = useSelector((state: any) => state.warZoneReducer.zoomLevel);

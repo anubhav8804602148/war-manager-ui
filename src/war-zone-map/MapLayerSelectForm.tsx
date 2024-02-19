@@ -4,15 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { actions } from "./store/WarZoneSlice";
 import axios from "axios";
 import './css/WarMapStyle.css';
-import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
-import DirectionsBike from '@mui/icons-material/DirectionsBike';
-import DirectionsBus from '@mui/icons-material/DirectionsBus';
 import SaveIcon from '@mui/icons-material/Save';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import LayerIcon from '@mui/icons-material/Layers';
 import { LocationSearchTextField } from "./LocationSearchTextField";
 import { NewGeoLayerForm } from "./NewGeoLayerForm";
+import AppsIcon from '@mui/icons-material/Apps';
+import AllAppsGrid from "../app-manager/AllAppsGrid";
 
 export const MapLayerSelectForm = () => {
 
@@ -25,12 +24,14 @@ export const MapLayerSelectForm = () => {
     };
     const [allMapLayers, setAllMapLayers] = useState([] as any);
     const showAllAvailableLayers = useSelector((state: any) => state.warZoneReducer.showAllAvailableLayers);
+    const allObjectsDrawn = useSelector((state: any) => state.warZoneReducer.allObjectsDrawn);
+    const showAllAvailableApps = useSelector((state: any) => state.warZoneReducer.showAllAvailableAppsDialog);
     const selectedMapLayer = useSelector((state: any) => state.warZoneReducer.selectedMapLayer);
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-        axios.get("http://localhost:10000/war-manager-map-layer-service/mapLayerType/getAllActiveLayers", {
+        axios.get(import.meta.env.VITE_API_MAP_LAYERS_GET_ALL_ACTIVE_LAYERS, {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -63,11 +64,15 @@ export const MapLayerSelectForm = () => {
     }
 
     const showCreateNewGeoLayerDialog = () => {
-        dispatch(actions.setNewGeoLayerDialogOpen(true));
+        if(allObjectsDrawn?.features?.length) dispatch(actions.setNewGeoLayerDialogOpen(true));
+        else {
+            dispatch(actions.setLogMessage({message: "No shape drawn yet", level: "info"}));
+            setTimeout(() => dispatch(actions.setLogMessage({message: "", level: ""})), 5000);
+        }
     }
 
     const loginOrLogout = () => {
-        axios.get("http://localhost:10000/war-manager-authentication-service/authentication/logout").then(_ => window.location.href = "/login");
+        axios.get(import.meta.env.VITE_API_AUTHENTICATION_LOGOUT).then(_ => window.location.href = "/login");
     }
 
     const handleShowAllAvailableLayers = () => {
@@ -108,12 +113,19 @@ export const MapLayerSelectForm = () => {
         }
     }
 
+    const showAllAvailableAppsDialog = () => {
+        dispatch(actions.setShowAllAvailableAppsDialog(true))
+    }
+
+    const allAvailableApps = () => {
+        if(showAllAvailableApps){
+            return <AllAppsGrid></AllAppsGrid>
+        }
+    }
+
     return <FormControl sx={{ m: 0, p: 0, minWidth: 0 }}>
         <img src="war-manager-icon.png" alt="" width={40} style={{ marginBottom: 20, marginLeft: -10 }} />
         <Divider sx={dividerStyle} variant="fullWidth"></Divider>
-        <Button size={"small"} sx={{ m: 0, p: 1, marginRight: 1, marginBottom: 1, minWidth: 0, color: "grey" }} onClick={() => handleMapLayerChange("Humanitarian")} title="Humanitarian"><DirectionsWalkIcon /></Button>
-        <Button size={"small"} sx={{ m: 0, p: 1, marginRight: 1, marginBottom: 1, minWidth: 0, color: "grey" }} onClick={() => handleMapLayerChange("Cycle Map")} title="Cycle Map"><DirectionsBike /></Button>
-        <Button size={"small"} sx={{ m: 0, p: 1, marginRight: 1, marginBottom: 1, minWidth: 0, color: "grey" }} onClick={() => handleMapLayerChange("Mapnik")} title="Mapnik"><DirectionsBus /></Button>
         <Button size={"small"} sx={{ m: 0, p: 1, marginRight: 1, marginBottom: 1, minWidth: 0, color: "grey" }} onClick={() => handleShowAllAvailableLayers()} title="Show All Layers"><LayerIcon /></Button>
         <Divider sx={dividerStyle} variant="fullWidth"></Divider>
         <Button size={"small"} sx={{ m: 0, p: 1, marginRight: 1, marginBottom: 1, minWidth: 0, color: "grey" }} onClick={() => showCreateNewGeoLayerDialog()} title="Save Current Polygons"><SaveIcon /></Button>
@@ -121,5 +133,7 @@ export const MapLayerSelectForm = () => {
         <Button size={"small"} sx={{ m: 0, p: 1, marginRight: 1, marginBottom: 1, minWidth: 0, color: "grey" }} onClick={() => loginOrLogout()} title="Logout">{getLoginOrLogoutIcon()}</Button>
         <NewGeoLayerForm />
         {allActiveLayersCheckBoxForm()}
+        <Button size={"small"} sx={{ m: 0, p: 1, marginRight: 1, marginBottom: 1, minWidth: 0, color: "grey" }} onClick={() => showAllAvailableAppsDialog()} title="Apps"><AppsIcon></AppsIcon></Button>
+        {allAvailableApps()}
     </FormControl>
 }

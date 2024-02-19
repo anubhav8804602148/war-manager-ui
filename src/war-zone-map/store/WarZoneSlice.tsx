@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const warZoneSlice = createSlice({
   name: 'warZone',
   initialState: {
-    selectedMapLayer: {url: "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", label: "humanitarian"},
+    selectedMapLayer: {url: import.meta.env.VITE_API_DEFAULT_TILE_LAYER, label: "Default"},
     selectedMapCentre: {},
     mapClassActivated: "",
     mapMarkers: [],
@@ -15,7 +15,9 @@ const warZoneSlice = createSlice({
       features: []
     },
     newGeoLayerDialogOpen: false,
-    showAllAvailableLayers: false
+    showAllAvailableLayers: false,
+    showAllAvailableAppsDialog: false,
+    userDetails: {} as UserDetails,
   },
   reducers: {
     setSelectedMapLayer: (state, action) => {
@@ -48,6 +50,12 @@ const warZoneSlice = createSlice({
     },
     setShowAllAvailableLayers: (state, action) => {
       state.showAllAvailableLayers = action.payload;
+    },
+    setShowAllAvailableAppsDialog: (state, action) => {
+      state.showAllAvailableAppsDialog = action.payload;
+    },
+    setUserDetails: (state, action) => {
+      state.userDetails = action.payload;
     }
   },
 });
